@@ -24,16 +24,15 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
   </head>
 
   <body>
 
 <div class="container">
-  <div class="">
-  <label>Brightness</label><input type="range" name="points" min="0"
-                                  max="100" id="brightness">
-  </div>
+<div id="brightness"></div>
   
 <div class="btn-group btn-hr" data-toggle="buttons">
 
@@ -106,11 +105,20 @@
     -->
 <script src="/js/bootstrap.js"></script>
 <script>
+$(function() {
+    $( "#brightness" ).slider({"min": 0, "max": 100,
+      "change": function(event, ui) {
+         $.post("/status", {"pwm_status": $(this).slider("value")});
+}});
+  });
 $(document).ready(function () {
   // init pwm slider.
   $.getJSON('/status', function (data) {
     console.log(data.pwm_status);
-//    $('#brightness').val(data.pwm_status);
+$("#brightness").slider({ value: data.pwm_status});
+    $('#brightness').val(data.pwm_status);
+//    $('#brightness').val(32);
+//    $('#slider').slider('refresh');
 });});
 
 // Register Click Handlers
