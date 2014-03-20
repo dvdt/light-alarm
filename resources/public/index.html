@@ -33,46 +33,47 @@
 
 <div class="container">
 <div id="brightness"></div>
-  
-<div class="btn-group btn-hr" data-toggle="buttons">
+ </div>
 
-  <label class="btn btn-primary" id="hr-1">
+<div class="container center-block">
+<div class="btn-group-vertical" data-toggle="buttons">
+  <label class="btn btn-hr  btn-primary" id="hr-1">
     <input type="radio" name="options" id="option2"> 1
   </label>
-  <label class="btn btn-primary" id="hr-2">
+  <label class="btn btn-hr  btn-primary" id="hr-2">
     <input type="radio" name="options" id="option3"> 2
   </label>
-  <label class="btn btn-primary" id="hr-3">
+  <label class="btn btn-hr  btn-primary" id="hr-3">
     <input type="radio" name="options" id="option4"> 3
   </label>
-  <label class="btn btn-primary" id="hr-4">
+  <label class="btn btn-hr  btn-primary" id="hr-4">
     <input type="radio" name="options" id="option5"> 4
   </label>
-  <label class="btn btn-primary" id="hr-5">
+  <label class="btn btn-hr  btn-primary" id="hr-5">
     <input type="radio" name="options" id="option6"> 5
   </label>
-  <label class="btn btn-primary" id="hr-6">
+  <label class="btn btn-hr  btn-primary" id="hr-6">
     <input type="radio" name="options" id="option7"> 6
   </label>
-  <label class="btn btn-primary" id="hr-7">
+  <label class="btn btn-hr  btn-primary" id="hr-7">
     <input type="radio" name="options" id="option8"> 7
   </label>
-  <label class="btn btn-primary" id="hr-8">
+  <label class="btn btn-hr  btn-primary" id="hr-8">
     <input type="radio" name="options" id="option9"> 8
   </label>
-  <label class="btn btn-primary" id="hr-9">
+  <label class="btn btn-hr  btn-primary" id="hr-9">
     <input type="radio" name="options" id="option10"> 9
-  </label>  
-  <label class="btn btn-primary" id="hr-10">
+  </label>
+  <label class="btn btn-hr  btn-primary" id="hr-10">
     <input type="radio" name="options" id="option11"> 10
-  </label>  <label class="btn btn-primary" id="hr-11">
+  </label>  <label class="btn btn-hr  btn-primary" id="hr-11">
     <input type="radio" name="options" id="option12"> 11
   </label>
-  <label class="btn btn-primary" id="hr-12">
+  <label class="btn btn-hr btn-primary" id="hr-12">
     <input type="radio" name="options" id="option1"> 12
   </label>
 </div>
-<br />
+
 <div class="btn-group btn-min" data-toggle="buttons">
   <label class="btn btn-primary" id="min-0">
     <input type="radio" name="options" id="option1"> :00
@@ -87,7 +88,7 @@
     <input type="radio" name="options" id="option1"> :45
   </label>
 </div>
-<br/>
+
 <div class="btn-group btn-meridian" data-toggle="buttons">
   <label class="btn btn-primary" id="meridian-am">
     <input type="radio" name="options" id="option1"> AM
@@ -119,12 +120,27 @@ $("#brightness").slider({ value: data.pwm_status});
     $('#brightness').val(data.pwm_status);
 //    $('#brightness').val(32);
 //    $('#slider').slider('refresh');
-});});
+});
+ init_alarm();
+});
+
+var init_alarm = function () {
+  $.getJSON('/alarm', function (data) {
+    $('#min-' + data.min).button('toggle');
+    $('#hr-' + data.hr).button('toggle');
+    $('#meridian-' + data.meridian).button('toggle')
+    
+  });
+}
 
 // Register Click Handlers
 $('.btn').click(function () {
   var e = $(this);
   console.log(e.attr("id"));
+  var msg = e.attr('id').split('-');
+  var post_obj = {};
+  post_obj[msg[0]] = msg[1];
+  $.post('/alarm', post_obj);
   });
 // Register click events, submit post request...
 
