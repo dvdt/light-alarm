@@ -11,7 +11,7 @@
 
 (def alarm-time (ref {:hr 7 :min 30 :meridian "am"}))
 (def pwm-status (ref 0))
-
+(def pwm-pin (ref nil))
 (defroutes app-routes
   (GET "/" [] (redirect "/index.html"))
   (route/resources "/")
@@ -36,7 +36,7 @@
    instance of GpioPinPwmOutput"
   [pwm-init]
   (let [gpio (GpioFactory/getInstance)]
-    (. gpio provisionPwmOutputPin  RaspiPin/GPIO_01  "MyLED" pwm-init)))
+    (dosync (ref-set pwm-pin (. gpio provisionPwmOutputPin  RaspiPin/GPIO_01  "MyLED" pwm-init)))))
 
 (defn -main  [& [port]]
       (let [port (Integer. (or port (System/getenv "PORT") 5000))]
