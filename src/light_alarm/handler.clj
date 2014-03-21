@@ -10,7 +10,7 @@
   (:gen-class))
 
 (def alarm-time (ref {:hr 7 :min 30 :meridian "am"}))
-(def pwm-status (ref 0))
+(def pwm-status (ref nil))
 (def pwm-pin (ref nil))
 (defroutes app-routes
   (GET "/" [] (redirect "/index.html"))
@@ -20,7 +20,8 @@
 (defroutes api-routes
   (GET "/status" [] {:body  {:pwm_status (deref pwm-status)}})
   (POST "/status" [pwm_status]
-        (dosync (ref-set pwm-status pwm_status))
+        (dosync (ref-set pwm-status pwm_status)
+                (.setPwm (deref pwm-pin) (Integer. pwm_status)))
         {:body  {:pwm_status (deref pwm-status)}})
   (GET "/alarm" [] {:body (deref alarm-time)})
   (POST "/alarm" [& p]
@@ -36,7 +37,8 @@
    instance of GpioPinPwmOutput"
   [pwm-init]
   (let [gpio (GpioFactory/getInstance)]
-    (dosync (ref-set pwm-pin (. gpio provisionPwmOutputPin  RaspiPin/GPIO_01  "MyLED" pwm-init)))))
+    (dosync (ref-set pwm-pin (. gpio provisionPwmOutputPin  RaspiPin/GPIO_01  "MyLED" pwm-init))
+            (ref-set pwm-status pwm-init))))
 
 (defn -main  [& [port]]
       (let [port (Integer. (or port (System/getenv "PORT") 5000))]
