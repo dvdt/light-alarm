@@ -11,7 +11,7 @@
     <title>Signin Template for Bootstrap</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="signin.css" rel="stylesheet">
@@ -25,14 +25,12 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
-  <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
   </head>
 
   <body>
 
-<div class="container">
-<div id="brightness"></div>
+<div class="container brightness-slider">
+<input type="range" min="0" max="1023"step="50"  id="brightness">
  </div>
 
 <div class="container center-block">
@@ -104,28 +102,21 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster
     -->
-<script src="/js/bootstrap.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 <script>
-$(function() {
-    $( "#brightness" ).slider({"min": 0, "max": 100,
-      "change": function(event, ui) {
-         $.post("/status", {"pwm_status": $(this).slider("value")});
-}});
-  });
 $(document).ready(function () {
   // init pwm slider.
-  $.getJSON('/status', function (data) {
+  $.getJSON('/lights/status', function (data) {
     console.log(data.pwm_status);
-$("#brightness").slider({ value: data.pwm_status});
-    $('#brightness').val(data.pwm_status);
-//    $('#brightness').val(32);
-//    $('#slider').slider('refresh');
+  $('#brightness').val(data.pwm_status);
+  $('#brightness').on('change', function () {
+     $.post("/lights/status", {"pwm_status": $(this).val()});});
 });
  init_alarm();
 });
 
 var init_alarm = function () {
-  $.getJSON('/alarm', function (data) {
+  $.getJSON('/lights/alarm', function (data) {
     $('#min-' + data.min).button('toggle');
     $('#hr-' + data.hr).button('toggle');
     $('#meridian-' + data.meridian).button('toggle')
@@ -138,9 +129,9 @@ $('.btn').click(function () {
   var e = $(this);
   console.log(e.attr("id"));
   var msg = e.attr('id').split('-');
-  var post_obj = {};
+  var post_obj = {"offset": (new Date()).getTimezoneOffset()};
   post_obj[msg[0]] = msg[1];
-  $.post('/alarm', post_obj);
+  $.post('/lights/alarm', post_obj);
   });
 // Register click events, submit post request...
 

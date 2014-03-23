@@ -7,7 +7,9 @@
                  [ring/ring-core "1.2.2"]
                  [ring/ring-json "0.3.0"]
                  [hiccup "1.0.5"]
-                 [com.pi4j/pi4j-core "0.0.5"]]
+                 [com.pi4j/pi4j-core "0.0.5"]
+                 [clj-time "0.6.0"]
+                 [org.clojure/tools.logging "0.2.6"]]
   :plugins [[lein-ring "0.8.10"]]
   :ring {:handler light-alarm.handler/app}
   :profiles
