@@ -2,3 +2,4 @@
 
 lein uberjar
 scp target/light-alarm-0.1.0-SNAPSHOT-standalone.jar pi@pi.davetsao.com:~/light-alarm/target
+ssh pi@pi.davetsao.com 'sudo supervisorctl restart lights'

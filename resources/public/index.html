@@ -16,24 +16,30 @@
     <!-- Custom styles for this template -->
     <link href="signin.css" rel="stylesheet">
 
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-  </head>
+<style>
+.light-switch {
+  padding: 10px;
+  margin: 10px;
+}
+</style>
+</head>
 
   <body>
-
-<div class="container brightness-slider">
-<input type="range" min="0" max="1023"step="50"  id="brightness">
- </div>
-
-<div class="container center-block">
+<div class="container center-block" data-toggle="buttons">
+  <div data-toggle="buttons">
+  <label class="btn btn-primary light-switch" id="lights-off">
+    <input type="radio" name="lights">Off
+  </label>
+  <label class="btn btn-primary light-switch" id="lights-on">
+    <input type="radio" name="lights">On
+  </label>
+    </div>
 <div class="btn-group-vertical" data-toggle="buttons">
   <label class="btn btn-hr  btn-primary" id="hr-1">
     <input type="radio" name="options" id="option2"> 1
@@ -108,10 +114,18 @@ $(document).ready(function () {
   // init pwm slider.
   $.getJSON('/lights/status', function (data) {
     console.log(data.pwm_status);
-  $('#brightness').val(data.pwm_status);
-  $('#brightness').on('change', function () {
-     $.post("/lights/status", {"pwm_status": $(this).val()});});
-});
+    if (data.pwm_status > 0) {
+      $('#lights-on').button('toggle');
+    } else {
+      $('#lights-off').button('toggle');
+    }
+    $('#lights-off').on('change', function () {
+    $.post("/lights/status", {"pwm_status": 0});});
+
+    $('#lights-on').on('change', function () {
+    $.post("/lights/status", {"pwm_status": 1023});});
+
+    });
  init_alarm();
 });
 
