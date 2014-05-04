@@ -11,17 +11,22 @@
             PinState RaspiPin])
   (:gen-class))
 
+;; Application state
 (def alarm-time (ref {:hr "7" :min "30" :meridian "am" :offset "300"}))
 (def pwm-status (ref nil))
 (def pwm-pin (ref nil))
 
-(defn set-pwm! [pwm]
+(defn set-pwm!
+  "Set the brightness level of the LED strip. 0 < pwm < 1024"
+  [pwm]
   (dosync (ref-set pwm-status pwm)
           (if (nil? (deref pwm-pin)) '()
               (.setPwm (deref pwm-pin) (Integer. pwm)))))
 
-(defn alarm-datetime [{hr :hr min :min meridian :meridian utc-offset :offset} now]
-  (let [year (t/year now)
+(defn alarm-datetime
+    "Calculates the next datetime that the alarm will go off"
+    [{hr :hr min :min meridian :meridian utc-offset :offset} now]
+    (let [year (t/year now)
         month (t/month now)
         day (t/day now)
         hr (Integer. hr)
@@ -44,7 +49,7 @@
             (ref-set pwm-status pwm-init))))
 
 (defn alarm-loop
-  "Compares current time to alarm setting. Turns on lights if current time matches alarm time"
+  "Infinite loop that compares current time to alarm setting. Turns on lights if current time matches alarm time"
   []
   (Thread/sleep 30000)
   (let [now (t/now)
@@ -55,6 +60,7 @@
            (info "Turning LEDs on!"))))
   (recur))
 
+;; API
 (defroutes app-routes
   (GET "/lights/" [] (redirect "/lights/index.html"))
   (route/resources "/lights")
