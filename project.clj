@@ -1,6 +1,6 @@
 (defproject light-alarm "0.1.0-SNAPSHOT"
   :description "Web server for RPi LED Alarm Clock"
-  :url ""
+  :url "http://davetsao.com/blog/2014-05-04-internet-of-things-in-bed.html"
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [compojure "1.1.6"]
                  [ring/ring-jetty-adapter "1.1.6"]
